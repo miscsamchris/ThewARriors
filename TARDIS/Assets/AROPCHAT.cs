@@ -241,8 +241,6 @@ public class AROPCHAT : MonoBehaviour
     {
         try
         {
-            t.utilsPlugin.UnMuteBeep();
-            t.Stop();
             apiAiUnity.StartNativeRecognition();
         }
         catch (Exception ex)
