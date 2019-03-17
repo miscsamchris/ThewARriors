@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿/*==============================================================================
+Copyright 2017 Maxst, Inc. All Rights Reserved.
+==============================================================================*/
+
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,20 +13,18 @@ using maxstAR;
 
 public class AROPman : ARBehaviour
 {
-
     [SerializeField]
-    private Text startBtnText = null, setBtn = null;
-    public GameObject model1,model2,model3,b1,b2;
-    public Image i1, i2;
-    private int index = 0,size=0;
+    private Text startBtnText = null;
+    public GameObject button;
+    private Image i;
     private Vector3 touchToWorldPosition = Vector3.zero;
     private Vector3 touchSumPosition = Vector3.zero;
     private bool findSurfaceDone = false;
     private bool setposition = false;
-    private ApiAiModule a;
+    private AROPCHAT a;
     private InstantTrackableBehaviour instantTrackable = null;
     private CameraBackgroundBehaviour cameraBackgroundBehaviour = null;
-    private Vector3 tp;
+
     void Awake()
     {
         Init();
@@ -57,15 +59,10 @@ public class AROPman : ARBehaviour
             CameraBackgroundBehaviour cameraBackground = FindObjectOfType<CameraBackgroundBehaviour>();
             cameraBackground.gameObject.SetActive(false);
         }
-        a = transform.GetComponent<ApiAiModule>();
-        var b = i1.color;
-        b.a = 1f;
-        i1.color = b;
-        i1.CrossFadeAlpha(1f, 0f, true);
-        b = i2.color;
-        b.a = 1f;
-        i2.color = b;
-        i2.CrossFadeAlpha(1f, 0f, true);
+        i = button.GetComponent<Image>();
+        a = transform.GetComponent<AROPCHAT>();
+        Sprite spr = Resources.Load<Sprite>("Fix");
+        i.sprite = spr;
     }
 
     void Update()
@@ -74,20 +71,7 @@ public class AROPman : ARBehaviour
         {
             return;
         }
-        if (Math.Abs(index) == 0)
-        {
-            model1.SetActive(true); model2.SetActive(false); model3.SetActive(false);
 
-        }
-        else if (Math.Abs(index) == 1)
-        {
-            model1.SetActive(false); model2.SetActive(true); model3.SetActive(false);
-
-        }
-        else
-        {
-            model1.SetActive(false); model2.SetActive(false); model3.SetActive(true);
-        }
         TrackingState state = TrackerManager.GetInstance().UpdateTrackingState();
 
         cameraBackgroundBehaviour.UpdateCameraBackgroundImage(state);
@@ -99,14 +83,16 @@ public class AROPman : ARBehaviour
             instantTrackable.OnTrackFail();
             return;
         }
-          if (Input.touchCount > 0 && setposition == false)
+
+        if (Input.touchCount > 0 && setposition == false)
         {
             UpdateTouchDelta(Input.GetTouch(0).position);
         }
-        else if (Input.touchCount > 0 && setposition == true && findSurfaceDone == true && Input.GetTouch(0).phase == TouchPhase.Began)
+        if (Input.touchCount > 0 && setposition == true && findSurfaceDone == true && Input.GetTouch(0).phase == TouchPhase.Began)
         {
             StartChatbot();
         }
+
         Trackable trackable = trackingResult.GetTrackable(0);
         Matrix4x4 poseMatrix = trackable.GetPose() * Matrix4x4.Translate(touchSumPosition);
         instantTrackable.OnTrackSuccess(trackable.GetId(), trackable.GetName(), poseMatrix);
@@ -159,14 +145,9 @@ public class AROPman : ARBehaviour
     {
         if (!findSurfaceDone)
         {
-            
             TrackerManager.GetInstance().FindSurface();
             if (startBtnText != null)
             {
-                i1.CrossFadeAlpha(0, 0.0f, false);
-                i2.CrossFadeAlpha(0, 0.0f, false);
-                b1.SetActive(false);
-                b2.SetActive(false);
                 startBtnText.text = "Stop Tracking";
             }
             findSurfaceDone = true;
@@ -177,10 +158,6 @@ public class AROPman : ARBehaviour
             TrackerManager.GetInstance().QuitFindingSurface();
             if (startBtnText != null)
             {
-                i1.CrossFadeAlpha(1, 0.0f, false);
-                i2.CrossFadeAlpha(1, 0.0f, false);
-                b1.SetActive(true);
-                b2.SetActive(true);
                 startBtnText.text = "Start Tracking";
             }
             findSurfaceDone = false;
@@ -189,16 +166,7 @@ public class AROPman : ARBehaviour
     public void SetPositionTrue()
     {
         setposition = !setposition;
-        setBtn.text = !setposition ? "Fix" : "UnFix";
-    }
-    public void indexinc()
-    {
-        index = Math.Abs(index + 1) % size;
-        Debug.Log(index);
-    }
-    public void indexdec()
-    {
-        index = Math.Abs(index - 1) % size;
-        Debug.Log(index);
+        Sprite spr = Resources.Load<Sprite>(!setposition ? "Fix" : "Unfix");
+        i.sprite = spr;
     }
 }

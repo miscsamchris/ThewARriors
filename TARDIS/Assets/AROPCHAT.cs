@@ -1,4 +1,4 @@
-//
+﻿//
 // API.AI Unity SDK Sample
 // =================================================
 //
@@ -33,12 +33,12 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine.Networking;
 
-public class ApiAiModule : MonoBehaviour
+public class AROPCHAT : MonoBehaviour
 {
 
     private ApiAiUnity apiAiUnity;
     private AudioSource aud;
-    private TextToSpeechDemo t;
+    private AROPTTS t;
 
     private readonly JsonSerializerSettings jsonSettings = new JsonSerializerSettings
     {
@@ -46,13 +46,7 @@ public class ApiAiModule : MonoBehaviour
     };
 
     private readonly Queue<Action> ExecuteOnMainThread = new Queue<Action>();
-    public IEnumerator newpage()
-    {
-        yield return new WaitForSeconds(2);
 
-        SceneManager.LoadScene("AROP");
-
-    }
     // Use this for initialization
     IEnumerator Start()
     {
@@ -77,7 +71,7 @@ public class ApiAiModule : MonoBehaviour
 
         apiAiUnity.OnError += HandleOnError;
         apiAiUnity.OnResult += HandleOnResult;
-        t = transform.GetComponent<TextToSpeechDemo>();
+        t = transform.GetComponent<AROPTTS>();
     }
 
     void HandleOnResult(object sender, AIResponseEventArgs e)
@@ -90,25 +84,22 @@ public class ApiAiModule : MonoBehaviour
                 var outText = aiResponse.Result.Fulfillment.Speech;
                 if (outText == "OBJECT PLACEMENT")
                 {
-                    if (SceneManager.GetActiveScene().name!="AROP")
-                    {
-                        StartCoroutine(newpage());
-                    }
+                    StartCoroutine(newpage());
                 }
                 if (outText.Split(' ')[0] == "ENTER")
                 {
                     var r = new System.Random();
                     PlayerPrefs.SetString("LID", r.Next().ToString());
-                    StartCoroutine(Upload(PlayerPrefs.GetString("LID","001"), outText.Split(' ')[1], outText.Split(' ')[2], outText.Split(' ')[3], outText.Split(' ')[4]));
+                    StartCoroutine(Upload(PlayerPrefs.GetString("LID", "001"), outText.Split(' ')[1], outText.Split(' ')[2], outText.Split(' ')[3], outText.Split(' ')[4]));
                 }
                 if (outText.Split(' ')[0] == "INFO")
                 {
-                    WWW req = new WWW("http://192.168.43.164:5000/getinfo/" + outText.Substring(outText.Split(' ')[0].Length +1) + "/");
+                    WWW req = new WWW("http://192.168.43.164:5000/getinfo/" + outText.Substring(outText.Split(' ')[0].Length + 1) + "/");
                     StartCoroutine(request(req));
                 }
                 if (outText.Split(' ')[0] == "BUY")
                 {
-                    WWW req = new WWW("http://192.168.43.164:5000/buy/" + "Order for "+outText.Substring(outText.Split(' ')[0].Length + 1) + "/"+PlayerPrefs.GetString("LID","001")+"/");
+                    WWW req = new WWW("http://192.168.43.164:5000/buy/" + "Order for " + outText.Substring(outText.Split(' ')[0].Length + 1) + "/" + PlayerPrefs.GetString("LID", "001") + "/");
                     StartCoroutine(request(req));
                 }
                 if (outText == "HELP")
@@ -135,6 +126,13 @@ public class ApiAiModule : MonoBehaviour
         {
             t.SpeakOut(req.text);
         }
+    }
+    public IEnumerator newpage()
+    {
+        yield return new WaitForSeconds(2);
+
+        SceneManager.LoadScene("AROP");
+
     }
     IEnumerator Upload(string ID, string NAME, string AGE, string PHONE, string EMAIL)
     {
