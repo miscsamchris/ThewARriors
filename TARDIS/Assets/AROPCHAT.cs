@@ -84,25 +84,28 @@ public class AROPCHAT : MonoBehaviour
                 var outText = aiResponse.Result.Fulfillment.Speech;
                 if (outText == "OBJECT PLACEMENT")
                 {
-                    StartCoroutine(newpage());
+                    if (SceneManager.GetActiveScene().name != "AROP")
+                    {
+                        StartCoroutine(newpage());
+                    }
                 }
-                if (outText.Split(' ')[0] == "ENTER")
+                if(outText.Substring(outText.IndexOf(' ')) == "ENTER")
                 {
                     var r = new System.Random();
                     PlayerPrefs.SetString("LID", r.Next().ToString());
                     StartCoroutine(Upload(PlayerPrefs.GetString("LID", "001"), outText.Split(' ')[1], outText.Split(' ')[2], outText.Split(' ')[3], outText.Split(' ')[4]));
                 }
-                if (outText.Split(' ')[0] == "INFO")
+                if (outText.Substring(outText.IndexOf(' ')) == "INFO")
                 {
-                    WWW req = new WWW("http://192.168.43.164:5000/getinfo/" + outText.Substring(outText.Split(' ')[0].Length + 1) + "/");
+                    WWW req = new WWW("http://192.168.43.164:5000/getinfo/" + outText.Substring(outText.IndexOf(' ') + 1) + "/");
                     StartCoroutine(request(req));
                 }
-                if (outText.Split(' ')[0] == "BUY")
+                if (outText.Substring(outText.IndexOf(' ')) == "BUY")
                 {
-                    WWW req = new WWW("http://192.168.43.164:5000/buy/" + "Order for " + outText.Substring(outText.Split(' ')[0].Length + 1) + "/" + PlayerPrefs.GetString("LID", "001") + "/");
+                    WWW req = new WWW("http://192.168.43.164:5000/buy/" + "Order for " + outText.Substring(outText.IndexOf(' ') + 1) + "/" + PlayerPrefs.GetString("LID", "001") + "/");
                     StartCoroutine(request(req));
                 }
-                if (outText == "HELP")
+                if(outText == "HELP")
                 {
                     WWW req = new WWW("http://192.168.43.164:5000/buy/" + "Need Help. Interior Decorator wanted. " + "/" + PlayerPrefs.GetString("LID", "001") + "/");
                     StartCoroutine(request(req));
