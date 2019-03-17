@@ -5,7 +5,19 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: Assets/Splash.unity
+    guid: efdec64e5ddb74946b4612bbc13b22a0
+  - enabled: 0
+    path: Assets/AppName.unity
+    guid: fc679c6a72777504088261394a2d38af
+  - enabled: 0
+    path: Assets/MainMenu.unity
+    guid: ffbc76182f431b24191a871ce268cdfe
+  - enabled: 0
+    path: Assets/AR.unity
+    guid: 12c2e3e937f7fb64db18ebcf143eddf1
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/AROP.unity
+    guid: 082ca64b30ed40e44b60695747961d46
   m_configObjects: {}
